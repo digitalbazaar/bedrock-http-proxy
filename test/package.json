@@ -1,0 +1,28 @@
+{
+  "name": "bedrock-http-proxy-test",
+  "version": "0.0.1-0",
+  "private": true,
+  "scripts": {
+    "test": "node --preserve-symlinks test test"
+  },
+  "dependencies": {
+    "apisauce": "^1.0.2",
+    "async": "^2.6.2",
+    "bedrock": "^1.15.0",
+    "bedrock-account": "^2.1.1",
+    "bedrock-did-client": "^1.1.2",
+    "bedrock-express": "^2.1.0",
+    "bedrock-http-proxy": "file:..",
+    "bedrock-identity": "^6.1.0",
+    "bedrock-key": "^5.1.2",
+    "bedrock-mongodb": "^5.5.0",
+    "bedrock-passport": "digitalbazaar/bedrock-passport#support-ocap-ld-updated",
+    "bedrock-permission": "^2.5.3",
+    "bedrock-server": "^2.3.2",
+    "bedrock-test": "^2.1.0",
+    "bedrock-validation": "^4.1.0",
+    "http-signature-header": "^1.2.0",
+    "nock": "^10.0.6",
+    "signature-algorithms": "^1.0.0"
+  }
+}
