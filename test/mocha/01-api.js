@@ -25,7 +25,7 @@ describe('Proxy HTTP API', () => {
     response.problem.should.equal('CLIENT_ERROR');
     response.data.type.should.equal('NotAllowedError');
   });
-  it('successfully proxies a request', async () => {
+  it('successfully proxies a GET request', async () => {
     _nockTargetEndpoint();
     const {privateKeyPem, publicKey: keyId} =
       mockData.identities.regularUser.keys.privateKey;
@@ -65,6 +65,26 @@ describe('Proxy HTTP API', () => {
     should.not.exist(response.problem);
     response.data.should.eql(targetSuccessResponse);
   });
+  it('successfully proxies a POST request', async () => {
+    _nockTargetEndpointPost();
+    const {privateKeyPem, publicKey: keyId} =
+      mockData.identities.regularUser.keys.privateKey;
+    const requestOptions = {
+      method: 'post',
+      url: proxyEndpoint,
+      headers: {}};
+    await helpers.createHttpSignatureRequest({
+      keyId,
+      privateKeyPem,
+      requestOptions,
+    });
+    const {headers} = requestOptions;
+    // NOTE: critical here that path is empty string and not '/' in order
+    // for the `host` header to match what was computed in the HTTPSignature
+    const response = await proxyApi.post('', {x: 6}, {httpsAgent, headers});
+    should.not.exist(response.problem);
+    response.data.should.eql(targetSuccessResponse);
+  });
   it('returns NotAllowedError on unauthorized user', async () => {
     _nockTargetEndpoint();
     const {privateKeyPem, publicKey: keyId} =
@@ -100,5 +120,13 @@ function _nockTargetEndpointGetQuery() {
   nock('https://127.0.0.1:18443')
     .get(targetEndpoint)
     .query({x: '6'})
+    .reply(200, targetSuccessResponse);
+}
+
+function _nockTargetEndpointPost() {
+  nock('https://127.0.0.1:18443')
+    .post(targetEndpoint, body => {
+      return body.x === 6;
+    })
     .reply(200, targetSuccessResponse);
 }

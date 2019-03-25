@@ -17,6 +17,14 @@ bedrock.events.on('bedrock.init', () => {
     // using IP here so nock can be used for this hostname
     targetEndpoint: 'https://127.0.0.1:18443/test-target-endpoint'
   });
+  brHttpProxy.addProxy({
+    authorizationCheck: _authorizationCheck,
+    method: 'post',
+    route: '/test-proxy',
+    strictSSL: false,
+    // using IP here so nock can be used for this hostname
+    targetEndpoint: 'https://127.0.0.1:18443/test-target-endpoint'
+  });
 });
 
 require('bedrock-test');
