@@ -45,6 +45,26 @@ describe('Proxy HTTP API', () => {
     should.not.exist(response.problem);
     response.data.should.eql(targetSuccessResponse);
   });
+  it('successfully proxies a GET request with a query', async () => {
+    _nockTargetEndpointGetQuery();
+    const {privateKeyPem, publicKey: keyId} =
+      mockData.identities.regularUser.keys.privateKey;
+    const requestOptions = {
+      method: 'get',
+      url: proxyEndpoint + '?x=6',
+      headers: {}};
+    await helpers.createHttpSignatureRequest({
+      keyId,
+      privateKeyPem,
+      requestOptions,
+    });
+    const {headers} = requestOptions;
+    // NOTE: critical here that path is empty string and not '/' in order
+    // for the `host` header to match what was computed in the HTTPSignature
+    const response = await proxyApi.get('', {x: 6}, {httpsAgent, headers});
+    should.not.exist(response.problem);
+    response.data.should.eql(targetSuccessResponse);
+  });
   it('returns NotAllowedError on unauthorized user', async () => {
     _nockTargetEndpoint();
     const {privateKeyPem, publicKey: keyId} =
@@ -73,5 +93,12 @@ function _nockTargetEndpoint() {
   // all requests to the given hostname
   nock('https://127.0.0.1:18443')
     .get(targetEndpoint)
+    .reply(200, targetSuccessResponse);
+}
+
+function _nockTargetEndpointGetQuery() {
+  nock('https://127.0.0.1:18443')
+    .get(targetEndpoint)
+    .query({x: '6'})
     .reply(200, targetSuccessResponse);
 }
