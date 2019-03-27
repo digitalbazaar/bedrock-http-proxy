@@ -39,21 +39,6 @@ api.createHttpSignatureRequest = async function createHttpSignatureRequest({
     authzHeaderOptions);
 };
 
-// api.createHttpSignatureRequest = function(options) {
-//   const newRequest = {
-//     url: options.url,
-//     httpSignature: {
-//       key: options.identity.keys.privateKey.privateKeyPem,
-//       keyId: options.identity.keys.publicKey.id,
-//       headers: ['date', 'host', 'request-line']
-//     }
-//   };
-//   if(options.body) {
-//     newRequest.body = options.body;
-//   }
-//   return newRequest;
-// };
-
 api.createIdentity = function(userName) {
   const newIdentity = {
     id: `urn:uuid:${uuid()}`,
