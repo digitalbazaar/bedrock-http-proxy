@@ -6,7 +6,11 @@
 const bedrock = require('bedrock');
 const brHttpProxy = require('bedrock-http-proxy');
 const brPermission = require('bedrock-permission');
+const {config} = bedrock;
 require('bedrock-mongodb');
+
+// module permissions
+const PERMISSIONS = config.permission.permissions;
 
 bedrock.events.on('bedrock.init', () => {
   brHttpProxy.addProxy({
@@ -30,10 +34,12 @@ bedrock.events.on('bedrock.init', () => {
 require('bedrock-test');
 bedrock.start();
 
-async function _authorizationCheck({user}) {
+async function _authorizationCheck({req}) {
+  const {user} = req;
   let authorized = false;
   try {
-    await brPermission.checkPermission(user.actor, 'TEST_PROXY_ACCESS');
+    await brPermission.checkPermission(
+      user.actor, PERMISSIONS.TEST_PROXY_ACCESS);
     authorized = true;
   } catch(e) {
     if(e.name !== 'PermissionDenied') {
